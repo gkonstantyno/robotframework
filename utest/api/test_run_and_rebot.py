@@ -9,11 +9,11 @@ import logging
 from os.path import abspath, dirname, join, exists, curdir
 from os import chdir
 
-from robot import run, rebot
+from robot import run, run_cli, rebot, rebot_cli
 from robot.model import SuiteVisitor
 from robot.running import namespace
 from robot.utils import StringIO
-from robot.utils.asserts import assert_equal, assert_true
+from robot.utils.asserts import assert_equal, assert_raises, assert_true
 
 from resources.runningtestcase import RunningTestCase
 from resources.Listener import Listener
@@ -28,8 +28,9 @@ LOG = 'Log:     %s' % LOG_PATH
 
 
 def run_without_outputs(*args, **kwargs):
-    kwargs.update(output='NONE', log='NoNe', report=None)
-    return run(*args, **kwargs)
+    options = {'output': 'NONE', 'log': 'NoNe', 'report': None}
+    options.update(kwargs)
+    return run(*args, **options)
 
 
 class StreamWithOnlyWriteAndFlush(object):
@@ -145,6 +146,14 @@ class TestRun(RunningTestCase):
                              [("[ ERROR ] Executing model modifier 'integer' "
                                "failed: AttributeError: ", 1)])
 
+    def test_run_cli_system_exits_by_default(self):
+        exit = assert_raises(SystemExit, run_cli, ['-d', TEMP, self.data])
+        assert_equal(exit.code, 1)
+
+    def test_run_cli_optionally_returns_rc(self):
+        rc = run_cli(['-d', TEMP, self.data], exit=False)
+        assert_equal(rc, 1)
+
 
 class TestRebot(RunningTestCase):
     data = join(ROOT, 'atest', 'testdata', 'rebot', 'created_normal.xml')
@@ -197,6 +206,14 @@ class TestRebot(RunningTestCase):
                            prerebotmodifier=modifier), 3)
         assert_equal(modifier.tests, ['Test 1.1', 'Test 1.2', 'Test 2.1'])
 
+    def test_rebot_cli_system_exits_by_default(self):
+        exit = assert_raises(SystemExit, rebot_cli, ['-d', TEMP, self.data])
+        assert_equal(exit.code, 1)
+
+    def test_rebot_cli_optionally_returns_rc(self):
+        rc = rebot_cli(['-d', TEMP, self.data], exit=False)
+        assert_equal(rc, 1)
+
 
 class TestStateBetweenTestRuns(RunningTestCase):
     data = join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot')
@@ -209,8 +226,11 @@ class TestStateBetweenTestRuns(RunningTestCase):
         assert_true(lib is not self._import_library())
         assert_true(res is not self._import_resource())
 
-    def _run(self, data, **config):
-        return run_without_outputs(data, outputdir=TEMP, **config)
+    def _run(self, data, rc=None, **config):
+        self._clear_outputs()
+        returned_rc = run_without_outputs(data, outputdir=TEMP, **config)
+        if rc is not None:
+            assert_equal(returned_rc, rc)
 
     def _import_library(self):
         return namespace.IMPORTER.import_library('BuiltIn', None, None, None)
@@ -221,10 +241,8 @@ class TestStateBetweenTestRuns(RunningTestCase):
 
     def test_clear_namespace_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'variables', 'commandline_variables.robot')
-        rc = self._run(data, test=['NormalText'], variable=['NormalText:Hello'])
-        assert_equal(rc, 0)
-        rc = self._run(data, test=['NormalText'])
-        assert_equal(rc, 1)
+        self._run(data, test=['NormalText'], variable=['NormalText:Hello'], rc=0)
+        self._run(data, test=['NormalText'], rc=1)
 
     def test_reset_logging_conf(self):
         assert_equal(logging.getLogger().handlers, [])
@@ -235,11 +253,18 @@ class TestStateBetweenTestRuns(RunningTestCase):
 
     def test_listener_unregistration(self):
         listener = join(ROOT, 'utest', 'resources', 'Listener.py')
-        assert_equal(run_without_outputs(self.data, listener=listener+':1'), 0)
+        self._run(self.data, listener=listener+':1', rc=0)
         self._assert_outputs([("[from listener 1]", 1), ("[listener close]", 1)])
-        self._clear_outputs()
-        assert_equal(run_without_outputs(self.data), 0)
+        self._run(self.data, rc=0)
         self._assert_outputs([("[from listener 1]", 0), ("[listener close]", 0)])
+
+    def test_rerunfailed_is_not_persistent(self):
+        # https://github.com/robotframework/robotframework/issues/2437
+        data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot')
+        self._run(data, output=OUTPUT_PATH, rc=1)
+        self._run(data, rerunfailed=OUTPUT_PATH, rc=1)
+        self._run(self.data, output=OUTPUT_PATH, rc=0)
+        assert_equal(rebot(OUTPUT_PATH, log=LOG_PATH, report=None), 0)
 
 
 class TestTimestampOutputs(RunningTestCase):

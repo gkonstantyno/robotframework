@@ -16,9 +16,9 @@ try:
 except ImportError:
     pass
 
-from robot.utils import (is_bytes, is_dict_like, is_list_like, is_string,
-                         type_name, JYTHON, PY3)
-from robot.utils.asserts import assert_equal
+from robot.utils import (is_bytes, is_falsy, is_dict_like, is_list_like,
+                         is_string, is_truthy, type_name, JYTHON, PY3)
+from robot.utils.asserts import assert_equal, assert_true
 
 
 if PY3:
@@ -46,12 +46,12 @@ class TestStringsAndBytes(unittest.TestCase):
     def test_strings(self):
         for thing in ['string', u'unicode', '', u'']:
             assert_equal(is_string(thing), True, thing)
-            assert_equal(is_bytes(thing), isinstance(thing, bytes))
+            assert_equal(is_bytes(thing), isinstance(thing, bytes), thing)
 
     def test_bytes(self):
         for thing in [b'bytes', bytearray(b'ba'), b'', bytearray()]:
             assert_equal(is_bytes(thing), True, thing)
-            assert_equal(is_string(thing), isinstance(thing, str))
+            assert_equal(is_string(thing), isinstance(thing, str), thing)
 
 
 class TestListLike(unittest.TestCase):
@@ -154,6 +154,26 @@ class TestTypeName(unittest.TestCase):
             for item, exp in [(String(), 'String'), (String, 'Class'),
                               (java.lang, 'javapackage'), (java, 'javapackage')]:
                 assert_equal(type_name(item), exp)
+
+
+class TestIsTruthyFalsy(unittest.TestCase):
+
+    def test_is_truthy_falsy(self):
+        for item in [True, 1, [False], unittest.TestCase, 'truE', 'fOo']:
+            for item in self._strings_also_in_different_cases(item):
+                assert_true(is_truthy(item) is True)
+                assert_true(is_falsy(item) is False)
+        for item in [False, 0, [], None,  '', 'faLse', 'nO', 'nOne']:
+            for item in self._strings_also_in_different_cases(item):
+                assert_true(is_truthy(item) is False)
+                assert_true(is_falsy(item) is True)
+
+    def _strings_also_in_different_cases(self, item):
+        yield item
+        if is_string(item):
+            yield item.lower()
+            yield item.upper()
+            yield item.title()
 
 
 if __name__ == '__main__':

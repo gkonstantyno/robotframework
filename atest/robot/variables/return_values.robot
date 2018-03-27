@@ -147,7 +147,7 @@ None To Dict
 
 Dictionary is dot-accessible
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \&{dotted} = { key=value }
+    Check Log Message    ${tc.kws[0].msgs[0]}    \&{dotted} = { key=value | nested={'key': 'value'} }
 
 Scalar dictionary is not dot-accessible
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -182,11 +182,11 @@ Big Items In Dictionary
 
 No Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    ${EMPTY}    \${nokeyword}
+    Check Keyword Data    ${tc.kws[0]}    ${EMPTY}    \${nokeyword}    status=FAIL
 
 Failing Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Fail    \${ret}    Failing instead of returning
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Fail    \${ret}    Failing instead of returning    status=FAIL
 
 Failing Keyword And Teardown
     Check Test Case    ${TESTNAME}

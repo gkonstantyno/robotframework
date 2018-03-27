@@ -220,6 +220,21 @@ environments and interpreters (Windows, Linux, OS X, Python, Jython,
 IronPython, Python 3, etc). Pull requests are also automatically tested on
 continuous integration.
 
+Executing changed code
+''''''''''''''''''''''
+
+If you want to manually verify the changes, an easy approach is directly
+running the `<src/robot/run.py>`_ script that is part of Robot Framework
+itself. Alternatively you can use the `<rundevel.py>`_ script that sets
+some command line options and environment variables to ease executing tests
+under the `<atest/testdata>`_ directory. It also automatically creates a
+``tmp`` directory in the project root and writes all outputs there.
+
+If you want to install the current code locally, you can do it like
+``python setup.py install`` as explained in `<INSTALL.rst>`_. For
+instructions how to create a distribution that allows installing elsewhere
+see `<BUILD.rst>`_.
+
 Acceptance tests
 ''''''''''''''''
 
@@ -233,27 +248,6 @@ Unit tests
 
 Unit tests are great for testing internal logic and should be added when
 appropriate. For more details see `<utest/README.rst>`_.
-
-Continuous integration
-''''''''''''''''''''''
-
-Robot Framework's continuous integration (CI) servers are visible through
-http://robot.radiaatto.ri.fi/. They automatically test all new commits
-to the repository both on Linux and on Windows, and pull requests can be
-tested there too.
-
-When a new pull request comes in, the CI will ask if one of the admins
-can verify the pull request. The admins are currently @jussimalinen and
-@pekkaklarck. The commands are:
-
--  ``robotci: once`` (run once)
--  ``robotci: enable`` (run whenever this pull request changes)
--  ``robotci: whitelist user`` (enable CI for all pull requests coming
-   from this user)
-
-The commands can be anywhere on the comment. Adding the skip statement
-(``[skip ci]``, with the square brackets) to the pull request body will
-cause the job not to be executed.
 
 Finalizing pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~

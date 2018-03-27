@@ -17,11 +17,12 @@ for creating test cases.
 
 Robot Framework is operating system and application independent. The core
 framework is implemented using `Python <http://python.org>`_, supports both
-Python 2 and Python 3, and runs also on `Jython <http://jython.org>`_ (JVM)
-and `IronPython <http://ironpython.net>`_ (.NET). The framework has a rich
-ecosystem around it consisting of various generic test libraries and tools
-that are developed as separate projects. For more information about Robot
-Framework and the ecosystem, see http://robotframework.org.
+Python 2 and Python 3, and runs also on `Jython <http://jython.org>`_ (JVM),
+`IronPython <http://ironpython.net>`_ (.NET) and `PyPy <http://pypy.org>`_.
+The framework has a rich ecosystem around it consisting of various generic
+test libraries and tools that are developed as separate projects. For more
+information about Robot Framework and the ecosystem, see
+http://robotframework.org.
 
 Robot Framework project is hosted on GitHub_ where you can find source code,
 an issue tracker, and some further documentation. See `<CONTRIBUTING.rst>`__
@@ -39,17 +40,9 @@ Robot Framework development is sponsored by `Robot Framework Foundation
    :target: https://pypi.python.org/pypi/robotframework
    :alt: Latest version
 
-.. image:: https://img.shields.io/pypi/dm/robotframework.svg
-   :target: https://pypi.python.org/pypi/robotframework
-   :alt: Number of downloads
-
 .. image:: https://img.shields.io/pypi/l/robotframework.svg
    :target: http://www.apache.org/licenses/LICENSE-2.0.html
    :alt: License
-
-.. image:: https://robotframework-slack.herokuapp.com/badge.svg
-   :target: https://robotframework-slack.herokuapp.com
-   :alt: Slack channel
 
 Installation
 ------------
@@ -65,8 +58,8 @@ from GitHub_. After that you can install the framework with::
 
     python setup.py install
 
-For more detailed installation instructions, including installing
-Python, Jython and IronPython, see `<INSTALL.rst>`__.
+For more detailed installation instructions, including installing Python,
+Jython, IronPython and PyPy, see `<INSTALL.rst>`__.
 
 Example
 -------
@@ -135,11 +128,11 @@ Support and contact
 
 - `robotframework-users
   <https://groups.google.com/group/robotframework-users/>`_ mailing list
-- `Slack <https://robotframework-slack.herokuapp.com>`_ community
+- `Slack <https://robotframework-slack-invite.herokuapp.com>`_ community
 - `#robotframework <http://webchat.freenode.net/?channels=robotframework&prompt=1>`_
   IRC channel on freenode
 - `@robotframework <https://twitter.com/robotframework>`_ on Twitter
-- `Other forums <http://robotframework.org/#support-contact>`_
+- `Other forums <http://robotframework.org/#support>`_
 
 License
 -------

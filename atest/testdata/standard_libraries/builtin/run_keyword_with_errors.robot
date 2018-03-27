@@ -98,7 +98,7 @@ Expect Error When Different Error Occurs
     Fail    This should not be executed
 
 Expect Error When Different Error Occurs 2
-    [Documentation]    FAIL REGEXP:Expected error 'My error' but got 'Evaluating expression 'foo == bar' failed: NameError: (name 'foo' is not defined|foo)'.
+    [Documentation]    FAIL STARTS: Expected error 'My error' but got 'Evaluating expression 'foo == bar' failed: NameError:
     Run Keyword And Expect Error    My error    Evaluate    foo == bar
     Fail    This should not be executed
 
@@ -145,8 +145,7 @@ Expect Error When Syntax Error At Parsing Time
     Run Keyword And Expect Error    *    Broken User Keyword
 
 Expect Error When Syntax Error At Run Time
-    [Documentation]    FAIL No keyword with name 'Non existing keyword' found.
-    Run Keyword And Expect Error    *    Non existing keyword
+    Run Keyword And Expect Error    No keyword with name 'Non existing keyword' found.    Non existing keyword
 
 Expect Error When Syntax Error In Setting Variables
     [Documentation]    FAIL Assignment can contain only one list variable.
@@ -176,7 +175,7 @@ Expect Error When Access To List Variable Nonexisting Index Syntax 2
     Run Keyword And Expect Error    ${expected_err_msg}    Access To List Variable Nonexisting Index Syntax 2
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 1
-    ${expected_err_msg} =  Set Variable   Resolving variable '\${dict[c]}' failed: NameError: name 'c' is not defined
+    ${expected_err_msg} =  Set Variable   Resolving variable '\${dict[c]}' failed: NameError: *
     Run Keyword And Expect Error    ${expected_err_msg}    Access To Dictionary Variable Nonexisting Key Syntax 1
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 2
